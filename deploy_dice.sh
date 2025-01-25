@@ -60,7 +60,7 @@ if [[ "$1" == "download" ]]; then
     curl -o "$download_dir/sealdice/146/146.tar.gz" https://d1.sealdice.com/sealdice-core_1.4.6_linux_amd64.tar.gz --progress-bar
 
     echo -e "${YELLOW}正在下载 1.5.0 版本...${NC}"
-    curl -o "$download_dir/sealdice/150/150.tar.gz" https://d1.sealdice.com/dev/sealdice_20241230-51780a6_linux_amd64.tar.gz --progress-bar
+    curl -o "$download_dir/sealdice/150/150.tar.gz" https://d1.sealdice.com/dev/sealdice_20250114-3b66781_linux_amd64.tar.gz --progress-bar
 
     # 检查下载结果
     if [[ -f "$download_dir/sealdice/146/146.tar.gz" && -f "$download_dir/sealdice/150/150.tar.gz" ]]; then

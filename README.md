@@ -34,7 +34,7 @@
 使用以下命令安装必要的软件包：
 
 ```bash
-sudo apt update && sudo apt install -y curl sudo bash wget ufw
+apt update && apt install -y curl sudo bash wget ufw
 ```
 
 ---

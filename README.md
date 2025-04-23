@@ -49,7 +49,7 @@ curl -o sealdice.sh "https://raw.githubusercontent.com/LoranaAurelia/Sealdice.sh
 ```
 如果你的主机在中国可以使用这个：
 ```bash
-curl -o sealdice.sh "https://sdsh.xuetao.online/sealdice.sh" && chmod +x sealdice.sh && ./sealdice.sh
+curl -o sealdice.sh "https://sdsh.cn.xuetao.host/sealdice.sh" && chmod +x sealdice.sh && ./sealdice.sh
 ```
 
 ### 脚本主菜单

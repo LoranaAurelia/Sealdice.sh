@@ -46,7 +46,6 @@ if [[ ! -d "$hidden_dir" ]]; then
     # 下载所有辅助脚本
     echo -e "${YELLOW}正在下载所有依赖脚本...${NC}"
     curl -o "$hidden_dir/$dice_script"            "$remote_url/$dice_script"            && chmod +x "$hidden_dir/$dice_script"
-    curl -o "$hidden_dir/$napcat_script"          "$remote_url/$napcat_script"          && chmod +x "$hidden_dir/$napcat_script"
     curl -o "$hidden_dir/$manage_dice_script"     "$remote_url/$manage_dice_script"     && chmod +x "$hidden_dir/$manage_dice_script"
     curl -o "$hidden_dir/$manage_napcat_script"   "$remote_url/$manage_napcat_script"   && chmod +x "$hidden_dir/$manage_napcat_script"
     curl -o "$hidden_dir/$lagrange_script"        "$remote_url/$lagrange_script"        && chmod +x "$hidden_dir/$lagrange_script"
@@ -227,7 +226,6 @@ while true; do
             echo -e "${YELLOW}正在更新脚本...${NC}"
             curl -o "$hidden_dir/sealdice.sh"             "$remote_url/sealdice.sh"            && chmod +x "$hidden_dir/sealdice.sh"
             curl -o "$hidden_dir/$dice_script"            "$remote_url/$dice_script"           && chmod +x "$hidden_dir/$dice_script"
-            curl -o "$hidden_dir/$napcat_script"          "$remote_url/$napcat_script"         && chmod +x "$hidden_dir/$napcat_script"
             curl -o "$hidden_dir/$manage_dice_script"     "$remote_url/$manage_dice_script"    && chmod +x "$hidden_dir/$manage_dice_script"
             curl -o "$hidden_dir/$manage_napcat_script"   "$remote_url/$manage_napcat_script"  && chmod +x "$hidden_dir/$manage_napcat_script"
             curl -o "$hidden_dir/$lagrange_script"        "$remote_url/$lagrange_script"       && chmod +x "$hidden_dir/$lagrange_script"

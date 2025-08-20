@@ -45,6 +45,10 @@ apt update && apt install -y curl sudo bash wget ufw
 
 执行以下命令下载并运行脚本：
 ```bash
+curl -o sealdice.sh "https://raw.githubusercontent.com/LoranaAurelia/Sealdice.sh/refs/heads/main/sealdice.sh" && chmod +x sealdice.sh && ./sealdice.sh
+```
+如果你的主机在中国大陆，可以使用这个：
+```bash
 curl -o sealdice.sh "https://sdsh.cn.xuetao.host/sealdice.sh" && chmod +x sealdice.sh && ./sealdice.sh
 ```
 

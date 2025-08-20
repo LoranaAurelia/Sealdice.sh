@@ -36,6 +36,7 @@ if [[ ! -d "$hidden_dir" ]]; then
     # 创建必要目录
     mkdir -p "$work_dir/sealdice-sh/downloads" "$work_dir/sealdice" "$work_dir/napcat" "$work_dir/lagrange"
     touch "$work_dir/sealdice-sh/data.csv"
+    touch "$work_dir/sealdice-sh/lagrange.csv"
     chmod -R 777 "$work_dir"
 
     # 设置环境变量
@@ -45,11 +46,11 @@ if [[ ! -d "$hidden_dir" ]]; then
 
     # 下载所有辅助脚本
     echo -e "${YELLOW}正在下载所有依赖脚本...${NC}"
-    curl -o "$hidden_dir/$dice_script" "$remote_url/$dice_script" && chmod +x "$hidden_dir/$dice_script"
-    curl -o "$hidden_dir/$napcat_script" "$remote_url/$napcat_script" && chmod +x "$hidden_dir/$napcat_script"
-    curl -o "$hidden_dir/$manage_dice_script" "$remote_url/$manage_dice_script" && chmod +x "$hidden_dir/$manage_dice_script"
-    curl -o "$hidden_dir/$manage_napcat_script" "$remote_url/$manage_napcat_script" && chmod +x "$hidden_dir/$manage_napcat_script"
-    curl -o "$hidden_dir/$lagrange_script" "$remote_url/$lagrange_script" && chmod +x "$hidden_dir/$lagrange_script"
+    curl -o "$hidden_dir/$dice_script"            "$remote_url/$dice_script"            && chmod +x "$hidden_dir/$dice_script"
+    curl -o "$hidden_dir/$napcat_script"          "$remote_url/$napcat_script"          && chmod +x "$hidden_dir/$napcat_script"
+    curl -o "$hidden_dir/$manage_dice_script"     "$remote_url/$manage_dice_script"     && chmod +x "$hidden_dir/$manage_dice_script"
+    curl -o "$hidden_dir/$manage_napcat_script"   "$remote_url/$manage_napcat_script"   && chmod +x "$hidden_dir/$manage_napcat_script"
+    curl -o "$hidden_dir/$lagrange_script"        "$remote_url/$lagrange_script"        && chmod +x "$hidden_dir/$lagrange_script"
     curl -o "$hidden_dir/$manage_lagrange_script" "$remote_url/$manage_lagrange_script" && chmod +x "$hidden_dir/$manage_lagrange_script"
 
     # 创建快捷命令
@@ -70,6 +71,7 @@ if [[ -f "$env_file" ]]; then
         # 创建必要目录
         mkdir -p "$work_dir/sealdice-sh/downloads" "$work_dir/sealdice" "$work_dir/napcat" "$work_dir/lagrange"
         touch "$work_dir/sealdice-sh/data.csv"
+        touch "$work_dir/sealdice-sh/lagrange.csv"
         chmod -R 777 "$work_dir"
 
         # 更新环境变量
@@ -88,6 +90,7 @@ else
     # 创建必要目录
     mkdir -p "$work_dir/sealdice-sh/downloads" "$work_dir/sealdice" "$work_dir/napcat" "$work_dir/lagrange"
     touch "$work_dir/sealdice-sh/data.csv"
+    touch "$work_dir/sealdice-sh/lagrange.csv"
     chmod -R 777 "$work_dir"
 
     # 创建环境变量文件
@@ -104,13 +107,13 @@ while true; do
     echo -e "\n${BLUE}[ 部署相关 ]${NC}"
     echo -e "${GREEN}0${NC} 下载 Sealdice"
     echo -e "${GREEN}1${NC} 部署 Sealdice"
-    echo -e "${GREEN}2${NC} 分离部署：安装Napcat"
-    echo -e "${GREEN}3${NC} 分离部署：下载Lagrange（未完工）"
+    echo -e "${GREEN}2${NC} 分离部署：部署Napcat"
+    echo -e "${GREEN}3${NC} 分离部署：部署Lagrange"
 
     echo -e "\n${BLUE}[ 运行管理 ]${NC}"
     echo -e "${GREEN}4${NC} Sealdice 运行管理"
     echo -e "${GREEN}5${NC} Napcat 运行管理"
-    echo -e "${GREEN}6${NC} Lagrange 运行管理（未完工）"
+    echo -e "${GREEN}6${NC} Lagrange 运行管理"
 
     echo -e "\n${BLUE}[ 脚本操作 ]${NC}"
     echo -e "${GREEN}7${NC} 更新脚本"
@@ -135,68 +138,80 @@ while true; do
             echo -e "${CYAN}正在检查 Napcat 安装情况...${NC}"
             if command -v napcat &>/dev/null; then
                 echo -e "${GREEN}Napcat 已检测到已安装！${NC}"
-                read -p "是否需要执行 napcat update 进行更新？（y/n）" update_confirm
-                if [[ "$update_confirm" == "y" || "$update_confirm" == "Y" ]]; then
+                read -p "是否执行 ${YELLOW}napcat update${NC} 进行更新？（y/n）" update_confirm
+                if [[ "$update_confirm" =~ ^[yY]$ ]]; then
                     echo -e "${GREEN}正在执行 napcat update...${NC}"
-                    napcat update
-                    if [[ $? -eq 0 ]]; then
+                    if napcat update; then
                         echo -e "${GREEN}Napcat 更新成功！${NC}"
                         exit 0
                     else
-                        echo -e "${RED}Napcat 更新失败，准备重新安装！${NC}"
+                        echo -e "${RED}Napcat 更新失败，将尝试重新安装。${NC}"
                     fi
                 else
-                    echo -e "${RED}用户取消更新操作。退出！${NC}"
+                    echo -e "${RED}已取消更新操作。退出。${NC}"
                     exit 0
                 fi
             fi
 
+            # 如有历史目录，先提示删除（可选）
             if [[ -d "./Napcat" ]]; then
-                echo -e "${WHITE_ON_RED}检测到当前目录下存在 Napcat 文件夹！${NC}"
-                read -p "确认是否删除 Napcat 文件夹？（y/n）" confirm
-                if [[ "$confirm" != "y" && "$confirm" != "Y" ]]; then
+                echo -e "${WHITE_ON_RED}检测到当前目录下存在 ./Napcat 文件夹！${NC}"
+                read -p "是否删除该文件夹后继续？（y/n）" confirm_rm
+                if [[ "$confirm_rm" =~ ^[yY]$ ]]; then
+                    rm -rf ./Napcat
+                    echo -e "${GREEN}已删除 ./Napcat。${NC}"
+                else
                     echo -e "${RED}操作已取消。${NC}"
                     exit 0
                 fi
-                rm -rf ./Napcat
-                echo -e "${GREEN}Napcat 文件夹已删除。${NC}"
             fi
 
             echo -e "${CYAN}请选择安装镜像：${NC}"
-            echo -e "1. 国内镜像"
-            echo -e "2. GitHub 镜像"
-            read -p "请输入选项（1/2）: " mirror_choice
+            echo -e "1) Napcat 官方镜像（nclatest.znin.net）"
+            echo -e "2) moeyy 代理"
+            echo -e "3) 1win.eu 代理"
+            echo -e "4) GitHub 原始镜像（raw.githubusercontent.com）"
+            read -p "请输入选项（1/2/3/4）: " mirror_choice
 
-            if [[ "$mirror_choice" != "1" && "$mirror_choice" != "2" ]]; then
-                echo -e "${RED}无效选择，退出安装！${NC}"
-                exit 1
-            fi
+            case "$mirror_choice" in
+                1) NAPCAT_URL="https://nclatest.znin.net/NapNeko/NapCat-Installer/main/script/install.sh" ;;
+                2) NAPCAT_URL="https://github.moeyy.xyz/https://raw.githubusercontent.com/NapNeko/NapCat-Installer/refs/heads/main/script/install.sh" ;;
+                3) NAPCAT_URL="https://jiashu.1win.eu.org/https://raw.githubusercontent.com/NapNeko/NapCat-Installer/refs/heads/main/script/install.sh" ;;
+                4) NAPCAT_URL="https://raw.githubusercontent.com/NapNeko/NapCat-Installer/refs/heads/main/script/install.sh" ;;
+                *) echo -e "${RED}无效选择，退出安装！${NC}"; exit 1 ;;
+            esac
 
-            echo -e "${RED}在安装过程中，请不要执行任何操作，请等待脚本执行10秒后默认shell安装。确认是否安装 Napcat？（y/n）${NC}"
-            read -p "" install_confirm
-            if [[ "$install_confirm" != "y" && "$install_confirm" != "Y" ]]; then
-                echo -e "${RED}操作已取消。${NC}"
+            echo -e "${RED}在安装过程中请不要操作。确认开始安装 Napcat？（y/n）${NC}"
+            read -r install_confirm
+            if [[ ! "$install_confirm" =~ ^[yY]$ ]]; then
+                echo -e "${RED}已取消安装。${NC}"
                 exit 0
             fi
 
-            if [[ "$mirror_choice" == "1" ]]; then
-                echo -e "${GREEN}使用国内镜像安装 Napcat...${NC}"
-                curl -o napcat.sh https://nclatest.znin.net/NapNeko/NapCat-Installer/main/script/install.sh && sudo bash napcat.sh --cli y --force
-                rm QQ.deb
+            echo -e "${GREEN}使用镜像：${BLUE}${NAPCAT_URL}${NC}"
+            if curl -fsSL -o napcat.sh "$NAPCAT_URL"; then
+                sudo bash napcat.sh --cli y --force
+                rc=$?
+                rm -f napcat.sh
+                if [[ $rc -ne 0 ]]; then
+                    echo -e "${WHITE_ON_RED}Napcat 安装脚本执行失败（exit=$rc）。请稍后重试或更换镜像。${NC}"
+                    exit $rc
+                fi
             else
-                echo -e "${GREEN}使用 GitHub 镜像安装 Napcat...${NC}"
-                curl -o napcat.sh https://raw.githubusercontent.com/NapNeko/NapCat-Installer/refs/heads/main/script/install.sh && sudo bash napcat.sh --cli y --force
-                rm QQ.deb
+                echo -e "${WHITE_ON_RED}下载安装脚本失败！请检查网络或更换镜像。${NC}"
+                exit 1
             fi
 
             if command -v napcat &>/dev/null; then
-                echo -e "${GREEN}Napcat 安装成功！${NC}"
+                echo -e "${GREEN}Napcat 安装成功！可直接运行：${YELLOW}napcat${NC}"
             else
-                echo -e "${RED}Napcat 安装失败，请检查安装日志。${NC}"
+                echo -e "${RED}Napcat 安装失败，请检查日志。${NC}"
+                exit 1
             fi
             ;;
         3)
-            bash "$hidden_dir/$lagrange_script"
+            bash "$hidden_dir/$lagrange_script" deploy "$SEALDICE_WORK_DIR"
+            exit 0
             ;;
         4)
             bash "$hidden_dir/$manage_dice_script"
@@ -207,17 +222,19 @@ while true; do
             ;;
         6)
             bash "$hidden_dir/$manage_lagrange_script"
+            exit 0
             ;;
         7)
             echo -e "${YELLOW}正在更新脚本...${NC}"
-            curl -o "$hidden_dir/sealdice.sh" "$remote_url/sealdice.sh" && chmod +x "$hidden_dir/sealdice.sh"
-            curl -o "$hidden_dir/$dice_script" "$remote_url/$dice_script" && chmod +x "$hidden_dir/$dice_script"
-            curl -o "$hidden_dir/$napcat_script" "$remote_url/$napcat_script" && chmod +x "$hidden_dir/$napcat_script"
-            curl -o "$hidden_dir/$manage_dice_script" "$remote_url/$manage_dice_script" && chmod +x "$hidden_dir/$manage_dice_script"
-            curl -o "$hidden_dir/$manage_napcat_script" "$remote_url/$manage_napcat_script" && chmod +x "$hidden_dir/$manage_napcat_script"
-            curl -o "$hidden_dir/$lagrange_script" "$remote_url/$lagrange_script" && chmod +x "$hidden_dir/$lagrange_script"
-            curl -o "$hidden_dir/$manage_lagrange_script" "$remote_url/$manage_lagrange_script" && chmod +x "$hidden_dir/$manage_lagrange_script"
-            echo -e "${GREEN}脚本已更新！${NC}"
+            curl -o "$hidden_dir/sealdice.sh"             "$remote_url/sealdice.sh"            && chmod +x "$hidden_dir/sealdice.sh"
+            curl -o "$hidden_dir/$dice_script"            "$remote_url/$dice_script"           && chmod +x "$hidden_dir/$dice_script"
+            curl -o "$hidden_dir/$napcat_script"          "$remote_url/$napcat_script"         && chmod +x "$hidden_dir/$napcat_script"
+            curl -o "$hidden_dir/$manage_dice_script"     "$remote_url/$manage_dice_script"    && chmod +x "$hidden_dir/$manage_dice_script"
+            curl -o "$hidden_dir/$manage_napcat_script"   "$remote_url/$manage_napcat_script"  && chmod +x "$hidden_dir/$manage_napcat_script"
+            curl -o "$hidden_dir/$lagrange_script"        "$remote_url/$lagrange_script"       && chmod +x "$hidden_dir/$lagrange_script"
+            curl -o "$hidden_dir/$manage_lagrange_script" "$remote_url/$manage_lagrange_script"&& chmod +x "$hidden_dir/$manage_lagrange_script"
+            echo -e "${GREEN}脚本已更新！请重新执行sealdice命令！${NC}"
+            exit 0
             ;;
         8)
             echo -e "${RED}完全卸载选项已选择。${NC}"

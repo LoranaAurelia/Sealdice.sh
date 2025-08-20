@@ -107,8 +107,8 @@ while true; do
     echo -e "\n${BLUE}[ 部署相关 ]${NC}"
     echo -e "${GREEN}0${NC} 下载 Sealdice"
     echo -e "${GREEN}1${NC} 部署 Sealdice"
-    echo -e "${GREEN}2${NC} 分离部署：部署Napcat"
-    echo -e "${GREEN}3${NC} 分离部署：部署Lagrange"
+    echo -e "${GREEN}2${NC} 分离部署：部署 Napcat"
+    echo -e "${GREEN}3${NC} 分离部署：部署 Lagrange"
 
     echo -e "\n${BLUE}[ 运行管理 ]${NC}"
     echo -e "${GREEN}4${NC} Sealdice 运行管理"

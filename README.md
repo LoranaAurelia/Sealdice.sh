@@ -62,19 +62,19 @@ curl -o sealdice.sh "https://sdsh.cn.xuetao.host/sealdice.sh" && chmod +x sealdi
 [ 部署相关 ]
 0 下载 Sealdice
 1 部署 Sealdice
-2 分离部署：Napcat
-3 分离部署：Lagrange（未完工）
+2 分离部署：部署 Napcat
+3 分离部署：部署 Lagrange
 
 [ 运行管理 ]
 4 Sealdice 运行管理
 5 Napcat 运行管理
-6 Lagrange 运行管理（未完工）
+6 Lagrange 运行管理
 
 [ 脚本操作 ]
 7 更新脚本
 8 卸载脚本
 
-0 退出脚本
+9 退出脚本
 -------- By 雪桃 --------
 ```
 

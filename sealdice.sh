@@ -2,7 +2,6 @@
 
 # 文件名定义
 dice_script="deploy_dice.sh"
-napcat_script="napcat.sh"
 manage_dice_script="manage_dice.sh"
 manage_napcat_script="manage_napcat.sh"
 lagrange_script="deploy_lagrange.sh"

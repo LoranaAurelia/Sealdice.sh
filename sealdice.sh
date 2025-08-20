@@ -6,7 +6,7 @@ manage_dice_script="manage_dice.sh"
 manage_napcat_script="manage_napcat.sh"
 lagrange_script="deploy_lagrange.sh"
 manage_lagrange_script="manage_lagrange.sh"
-remote_url="https://raw.githubusercontent.com/LoranaAurelia/Sealdice.sh/refs/heads/main"
+remote_url="https://raw.githubusercontent.com/LoranaAurelia/Sealdice.sh/main"
 
 # 颜色定义
 GREEN='\033[0;32m'

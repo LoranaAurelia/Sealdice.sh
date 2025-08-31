@@ -66,7 +66,7 @@ probe_sign_url() {
       -H 'Pragma: no-cache' -H 'Cache-Control: no-cache' \
       -o "$body" \
       -w 'HTTP_CODE:%{http_code} TIME:%{time_total} SSL:%{ssl_verify_result}' \
-      "$url" 2>/dev/null || true)"
+      "$url/ping" 2>/dev/null || true)"
 
     http="$(printf '%s' "$metrics" | sed -n 's/.*HTTP_CODE:\([0-9][0-9][0-9]\).*/\1/p')"
     time="$(printf '%s' "$metrics" | sed -n 's/.*TIME:\([0-9.]*\).*/\1/p')"
@@ -117,6 +117,7 @@ run_signature_probes() {
     "雪桃 の lgr源 反代 - 主线"
     "雪桃 の lgr源 反代 - 备用"
     "山本健一 - aaa1"
+    "Hanbi Live - 阿里云CDN反代（Lagrange 官方源）"
     "雪桃 の 海豹源 反代 - 备用的备用"
   )
   local urls=(
@@ -124,6 +125,7 @@ run_signature_probes() {
     "https://backbone.seal-sign.xuetao.host/api/sign/30366"
     "https://turbo.seal-sign.xuetao.host/api/sign/30366"
     "https://lagrmagic.cblkseal.tech/api/sign/30366"
+    "https://sign.hanbi.live/api/sign/30366"
     "http://39.108.115.52:58080/api/sign/30366"
   )
 
@@ -156,7 +158,10 @@ print_signature_menu() {
   echo -e " ${GREEN}4)${NC} ${BLUE}山本健一 - aaa1${NC}"
   echo -e "    · 由山本健一提供，反代的海豹源签名。${YELLOW}主机在就在中国大陆，有备案，对高墙地带很友好。${NC}"
   echo -e ""
-  echo -e " ${GREEN}5)${NC} ${BLUE}雪桃 の 海豹源 反代 - 备用的备用${NC}"
+  echo -e " ${GREEN}5)${NC} ${BLUE}Hanbi Live - 阿里云CDN反代（Lagrange 官方源）${NC}"
+  echo -e "    · 由 Hanbi Live 提供，使用阿里云 CDN 反代 Lagrange 官方签名源。${YELLOW}适合中国大陆环境，稳定性取决于 CDN 及节点。${NC}"
+  echo -e ""
+  echo -e " ${GREEN}6)${NC} ${BLUE}雪桃 の 海豹源 反代 - 备用的备用${NC}"
   echo -e "    · 雪桃反代的海豹源签名，主机是国内阿里云。因为没有备案只能裸IP，${YELLOW}可能会有被攻击导致访问异常的风险。${NC}；但对于网络高墙地带（如福建、江苏部分地区、内蒙古部分地区、新疆部分地区），是极大概率可以直接访问的。"
   echo -e "${CYAN}────────────────────────────────────────────────────────${NC}"
 }
@@ -236,6 +241,25 @@ ensure_system_dotnet9() {
   fi
 }
 
+ensure_icu() {
+  if ldconfig -p 2>/dev/null | grep -q 'libicuuc\.so'; then
+    echo -e "${GREEN}ICU 运行库已存在。${NC}"
+    return 0
+  fi
+
+  echo -e "${YELLOW}正在安装 ICU 运行库...${NC}"
+  sudo apt-get update -y || true
+  # 自动找最新的 libicuXX 包
+  local pkg
+  pkg="$(apt-cache search -n '^libicu[0-9]+$' | awk '{print $1}' | sort -V | tail -n1)"
+  if [[ -n "$pkg" ]]; then
+    sudo DEBIAN_FRONTEND=noninteractive apt-get install -y "$pkg"
+  else
+    # 极端情况下找不到版本包，就兜底装 libicu-dev
+    sudo DEBIAN_FRONTEND=noninteractive apt-get install -y libicu-dev
+  fi
+}
+
 # ========== 表格输出 ==========
 list_instances() {
   local col1=20 col2=28 col3=8 col4=10
@@ -291,7 +315,7 @@ fi
 
 # 打印菜单并读取选择
 print_signature_menu
-read -p "$(echo -e ${YELLOW}输入编号（1/2/3/4/5）：${NC} )" sign_choice
+read -p "$(echo -e ${YELLOW}输入编号（1/2/3/4/5/6）：${NC} )" sign_choice
 
 # 与菜单一一对应的 URL 常量
 lgr_official="https://sign.lagrangecore.org/api/sign/30366"
@@ -299,13 +323,15 @@ lorana_proxy_backbone="https://backbone.seal-sign.xuetao.host/api/sign/30366"
 lorana_proxy_turbo="https://turbo.seal-sign.xuetao.host/api/sign/30366"
 cblkseal="https://lagrmagic.cblkseal.tech/api/sign/30366"
 lorana_proxy_backup="http://39.108.115.52:58080/api/sign/30366"
+hanbi_live="https://sign.hanbi.live/api/sign/30366"
 
 case "${sign_choice:-}" in
   1) sign_server_url="$lgr_official" ;;
   2) sign_server_url="$lorana_proxy_backbone" ;;
   3) sign_server_url="$lorana_proxy_turbo" ;;
   4) sign_server_url="$cblkseal" ;;
-  5) sign_server_url="$lorana_proxy_backup" ;;
+  5) sign_server_url="$hanbi_live" ;;
+  6) sign_server_url="$lorana_proxy_backup" ;;
   *) echo -e "${YELLOW}未选择有效编号，默认使用：${BLUE}Lagrange 官方${NC}"; sign_server_url="$lgr_official" ;;
 esac
 
@@ -333,6 +359,7 @@ done
 
 # 6) 系统级 .NET 9 SDK
 ensure_system_dotnet9
+ensure_icu
 
 # 7) 准备目录
 inst_dir="$instances_dir/$reg_name"

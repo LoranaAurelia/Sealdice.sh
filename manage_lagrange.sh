@@ -53,7 +53,10 @@ print_signature_menu() {
   echo -e " ${GREEN}4)${NC} ${BLUE}山本健一 - aaa1${NC}"
   echo -e "    · 反代海豹源，${YELLOW}中国大陆主机${NC}，高墙地带友好"
   echo -e ""
-  echo -e " ${GREEN}5)${NC} ${BLUE}雪桃 の 海豹源 反代 - 备用的备用${NC}"
+  echo -e " ${GREEN}5)${NC} ${BLUE}Hanbi Live - 阿里云CDN反代（Lagrange 官方源）${NC}"
+  echo -e "    · 使用阿里云 CDN 反代官方签名；${YELLOW}适合中国大陆环境，稳定性取决于 CDN 节点${NC}"
+  echo -e ""
+  echo -e " ${GREEN}6)${NC} ${BLUE}雪桃 の 海豹源 反代 - 备用的备用${NC}"
   echo -e "    · 国内阿里云，裸 IP，可能被打；但对部分地区可达性更好"
   echo -e "${CYAN}────────────────────────────────────────────────────────${NC}"
 }
@@ -72,7 +75,7 @@ probe_sign_url() {
       -H 'Pragma: no-cache' -H 'Cache-Control: no-cache' \
       -o "$body" \
       -w 'HTTP_CODE:%{http_code} TIME:%{time_total} SSL:%{ssl_verify_result}' \
-      "$url" 2>/dev/null || true)"
+      "$url/ping" 2>/dev/null || true)"
     http="$(printf '%s' "$metrics" | sed -n 's/.*HTTP_CODE:\([0-9][0-9][0-9]\).*/\1/p')"
     time="$(printf '%s' "$metrics" | sed -n 's/.*TIME:\([0-9.]*\).*/\1/p')"
     ssl="$(printf '%s' "$metrics" | sed -n 's/.*SSL:\([0-9]*\).*/\1/p')"
@@ -109,20 +112,22 @@ probe_sign_url() {
 }
 
 run_signature_probes() {
-  local names=(
-    "Lagrange 官方"
-    "雪桃 の lgr源 反代 - 主线"
-    "雪桃 の lgr源 反代 - 备用"
-    "山本健一 - aaa1"
-    "雪桃 の 海豹源 反代 - 备用的备用"
-  )
-  local urls=(
-    "https://sign.lagrangecore.org/api/sign/30366"
-    "https://backbone.seal-sign.xuetao.host/api/sign/30366"
-    "https://turbo.seal-sign.xuetao.host/api/sign/30366"
-    "https://lagrmagic.cblkseal.tech/api/sign/30366"
-    "http://39.108.115.52:58080/api/sign/30366"
-  )
+    local names=(
+      "Lagrange 官方"
+      "雪桃 の lgr源 反代 - 主线"
+      "雪桃 の lgr源 反代 - 备用"
+      "山本健一 - aaa1"
+      "Hanbi Live - 阿里云CDN反代（Lagrange 官方源）"
+      "雪桃 の 海豹源 反代 - 备用的备用"
+    )
+    local urls=(
+      "https://sign.lagrangecore.org/api/sign/30366"
+      "https://backbone.seal-sign.xuetao.host/api/sign/30366"
+      "https://turbo.seal-sign.xuetao.host/api/sign/30366"
+      "https://lagrmagic.cblkseal.tech/api/sign/30366"
+      "https://sign.hanbi.live/api/sign/30366"
+      "http://39.108.115.52:58080/api/sign/30366"
+    )
   echo -e "${YELLOW}正在进行签名可访问性测试（每个 10 次），请稍候...${NC}"
   local all_output=""
   for i in "${!urls[@]}"; do
@@ -327,23 +332,25 @@ change_signature() {
   [[ "$do_probe" =~ ^[yY]$ ]] && run_signature_probes
 
   print_signature_menu
-  read -p "$(echo -e ${YELLOW}输入编号（1/2/3/4/5）：${NC}) " choice
+  read -p "$(echo -e ${YELLOW}输入编号（1/2/3/4/5/6）：${NC}) " choice
 
   local lgr_official="https://sign.lagrangecore.org/api/sign/30366"
   local lorana_proxy_backbone="https://backbone.seal-sign.xuetao.host/api/sign/30366"
   local lorana_proxy_turbo="https://turbo.seal-sign.xuetao.host/api/sign/30366"
   local cblkseal="https://lagrmagic.cblkseal.tech/api/sign/30366"
   local lorana_proxy_backup="http://39.108.115.52:58080/api/sign/30366"
+  local hanbi_live="https://sign.hanbi.live/api/sign/30366"
 
-  local url="$lgr_official"
-  case "${choice:-}" in
-    1) url="$lgr_official" ;;
-    2) url="$lorana_proxy_backbone" ;;
-    3) url="$lorana_proxy_turbo" ;;
-    4) url="$cblkseal" ;;
-    5) url="$lorana_proxy_backup" ;;
-    *) echo -e "${YELLOW}未选择有效编号，使用默认：${BLUE}Lagrange 官方${NC}" ;;
-  esac
+    local url="$lgr_official"
+    case "${choice:-}" in
+      1) url="$lgr_official" ;;
+      2) url="$lorana_proxy_backbone" ;;
+      3) url="$lorana_proxy_turbo" ;;
+      4) url="$cblkseal" ;;
+      5) url="$hanbi_live" ;;
+      6) url="$lorana_proxy_backup" ;;
+      *) echo -e "${YELLOW}未选择有效编号，使用默认：${BLUE}Lagrange 官方${NC}" ;;
+    esac
 
   backup_cfg "$cfg"
   update_json_inplace "$cfg" --arg u "$url" '.SignServerUrl=$u'

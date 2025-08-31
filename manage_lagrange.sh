@@ -51,26 +51,26 @@ ensure_tools
 
 # ========== 签名菜单/测试（与部署脚本保持一致） ==========
 print_signature_menu() {
-  echo -e "${CYAN}请选择签名方案（将写入 appsettings.json 的 SignServerUrl）：${NC}"
+  echo -e "${CYAN}请选择签名方案：${NC}"
   echo -e "${YELLOW}注意：${NC}延迟低≠访问性好，请以实测稳定性为准。"
   echo -e "${CYAN}────────────────────────────────────────────────────────${NC}"
   echo -e " ${GREEN}1)${NC} ${BLUE}Lagrange 官方${NC}"
-  echo -e "    · 位于美西，Cloudflare 代理；中国大陆访问性一般，${YELLOW}推荐海外主机使用${NC}"
+  echo -e "    · 这是 Lagrange 官方签名，位于美西，由 Cloudflare 代理，在中国大陆访问性较差；${YELLOW}推荐海外主机使用。${NC}"
   echo -e ""
   echo -e " ${GREEN}2)${NC} ${BLUE}雪桃 の lgr源 反代 - 主线${NC}"
-  echo -e "    · 反代官方签名，普线；${YELLOW}推荐中国大陆使用${NC}"
+  echo -e "    · 由雪桃提供，反代 Lagrange 官方签名的源。适合中国大陆主机，是雪桃特挑的体质较好的普线主机，${YELLOW}推荐中国大陆使用。${NC}"
   echo -e ""
   echo -e " ${GREEN}3)${NC} ${BLUE}雪桃 の lgr源 反代 - 备用${NC}"
-  echo -e "    · 反代官方签名，优化线路；主线可用时${YELLOW}优先主线${NC}"
+  echo -e "    · 由雪桃提供，反代 Lagrange 官方签名的源。备用线路，大陆优化线路，中国大陆访问性好，但建议主线可用时${YELLOW}优先使用主线。${NC}"
   echo -e ""
   echo -e " ${GREEN}4)${NC} ${BLUE}山本健一 - aaa1${NC}"
-  echo -e "    · 反代海豹源，${YELLOW}中国大陆主机${NC}，高墙地带友好"
+  echo -e "    · 由山本健一提供，反代的海豹源签名。${YELLOW}主机在就在中国大陆，有备案，对高墙地带很友好。${NC}"
   echo -e ""
   echo -e " ${GREEN}5)${NC} ${BLUE}Hanbi Live - 阿里云CDN反代（Lagrange 官方源）${NC}"
-  echo -e "    · 使用阿里云 CDN 反代官方签名；${YELLOW}适合中国大陆环境，稳定性取决于 CDN 节点${NC}"
+  echo -e "    · 由 Hanbi Live 提供，使用阿里云 CDN 反代 Lagrange 官方签名源。"
   echo -e ""
   echo -e " ${GREEN}6)${NC} ${BLUE}雪桃 の 海豹源 反代 - 备用的备用${NC}"
-  echo -e "    · 国内阿里云，裸 IP，可能被打；但对部分地区可达性更好"
+  echo -e "    · 雪桃反代的海豹源签名，主机是国内阿里云。因为没有备案只能裸IP，${YELLOW}可能会有被攻击导致访问异常的风险。${NC}；但对于网络高墙地带（如福建、江苏部分地区、内蒙古部分地区、新疆部分地区），是极大概率可以直接访问的。"
   echo -e "${CYAN}────────────────────────────────────────────────────────${NC}"
 }
 

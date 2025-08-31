@@ -1,5 +1,18 @@
-#!/bin/bash
-set -euo pipefail
+#!/usr/bin/env bash
+# 如果当前不是 bash 且系统里也没有 bash，就继续用当前壳；只会启用 -eu，不再动 pipefail
+if [ -z "${BASH_VERSION:-}" ]; then
+  if command -v bash >/dev/null 2>&1; then
+    exec bash "$0" "$@"
+  fi
+fi
+
+# POSIX 安全严格模式
+set -eu
+
+# 仅在 bash/zsh 下尝试开启 pipefail；在其它壳上完全跳过
+if [ -n "${BASH_VERSION:-}" ] || [ -n "${ZSH_VERSION:-}" ]; then
+  set -o pipefail 2>/dev/null || true
+fi
 
 # ========== 颜色 ==========
 GREEN='\033[0;32m'

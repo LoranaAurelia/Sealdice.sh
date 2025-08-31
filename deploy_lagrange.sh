@@ -172,7 +172,7 @@ print_signature_menu() {
   echo -e "    · 由山本健一提供，反代的海豹源签名。${YELLOW}主机在就在中国大陆，有备案，对高墙地带很友好。${NC}"
   echo -e ""
   echo -e " ${GREEN}5)${NC} ${BLUE}Hanbi Live - 阿里云CDN反代（Lagrange 官方源）${NC}"
-  echo -e "    · 由 Hanbi Live 提供，使用阿里云 CDN 反代 Lagrange 官方签名源。${YELLOW}适合中国大陆环境，稳定性取决于 CDN 及节点。${NC}"
+  echo -e "    · 由 Hanbi Live 提供，使用阿里云 CDN 反代 Lagrange 官方签名源。"
   echo -e ""
   echo -e " ${GREEN}6)${NC} ${BLUE}雪桃 の 海豹源 反代 - 备用的备用${NC}"
   echo -e "    · 雪桃反代的海豹源签名，主机是国内阿里云。因为没有备案只能裸IP，${YELLOW}可能会有被攻击导致访问异常的风险。${NC}；但对于网络高墙地带（如福建、江苏部分地区、内蒙古部分地区、新疆部分地区），是极大概率可以直接访问的。"

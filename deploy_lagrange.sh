@@ -138,7 +138,7 @@ run_signature_probes() {
     "雪桃 の 海豹源 反代 - 备用的备用"
   )
   local urls=(
-    "https://sign.lagrangecore.org/api/sign/39038"
+    "https://sign.lagrangecore.org/api/sign/30366"
     "https://backbone.seal-sign.xuetao.host/api/sign/39038"
     "https://turbo.seal-sign.xuetao.host/api/sign/39038"
     "https://lagrmagic.cblkseal.tech/api/sign/39038"
@@ -355,7 +355,7 @@ print_signature_menu
 read -p "$(echo -e ${YELLOW}输入编号（1/2/3/4/5/6）：${NC} )" sign_choice
 
 # 与菜单一一对应的 URL 常量
-lgr_official="https://sign.lagrangecore.org/api/sign/39038"
+lgr_official="https://sign.lagrangecore.org/api/sign/30366"
 lorana_proxy_backbone="https://backbone.seal-sign.xuetao.host/api/sign/39038"
 lorana_proxy_turbo="https://turbo.seal-sign.xuetao.host/api/sign/39038"
 cblkseal="https://lagrmagic.cblkseal.tech/api/sign/39038"
@@ -530,3 +530,4 @@ else
   sudo systemctl daemon-reload >/dev/null 2>&1
   exit 1
 fi
+

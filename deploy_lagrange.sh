@@ -31,6 +31,10 @@ DOTNET_VERSION="9.0.304"
 DOTNET_BASE_URL="https://builds.dotnet.microsoft.com/dotnet/Sdk"
 DOTNET_INSTALL_DIR="/usr/local/dotnet"      # 系统级安装路径
 DOTNET_BIN_LINK="/usr/local/bin/dotnet"     # 系统级可执行链接
+# 旧版（最后一个能正确处理好友请求的版本）
+OLD_LAGRANGE_SUBDIR_ENC="%E5%A5%BD%E5%8F%8B%E6%B2%A1%E9%97%AE%E9%A2%98%E7%9A%84%E7%89%88%E6%9C%ACFeb_13_ddda0a6"
+# 默认选用“最新”，若用户选旧版则赋值为上面这个编码目录
+lagrange_subdir_enc=""
 
 # ========== 入参 / 环境 ==========
 SUBCMD="${1:-deploy}"
@@ -303,9 +307,29 @@ else
   echo -e "${YELLOW}当前没有任何已注册的 Lagrange 实例。${NC}"
 fi
 
+# === 版本选择（在签名选择之前） ===
+echo -e "${CYAN}你想使用哪个版本的 Lagrange？${NC}"
+echo -e "  ${GREEN}1)${NC} 测试稳定的老版本（2025-02-13-ddda0a6）"
+echo -e "     · 最后一个可以正确处理好友请求、能正确发送戳一戳"
+echo -e "     · 但可能存在其他问题"
+echo -e "  ${GREEN}2)${NC} 最新（使用最新 Action 打包）"
+read -p "$(echo -e ${YELLOW}请输入编号（1/2，默认 2）：${NC})" ver_choice
+ver_choice="${ver_choice:-2}"
+
+case "$ver_choice" in
+  1)
+    lagrange_subdir_enc="$OLD_LAGRANGE_SUBDIR_ENC"
+    echo -e "${YELLOW}已选择：测试稳定的老版本（2025-02-13-ddda0a6）。${NC}"
+    ;;
+  *)
+    lagrange_subdir_enc=""
+    echo -e "${YELLOW}已选择：最新版本（Action 最新构建）。${NC}"
+    ;;
+esac
+
 # 2) 签名简述 + 是否继续
 echo -e ""
-echo -e "\nSealdice 的内置客户端本质上是自动配置 Lagrange，而 Lagrange 运行需要签名服务。"
+echo -e "\nLagrange 运行需要签名服务。"
 echo -e ""
 echo -e "不同签名服务的访问速度、稳定性因网络环境而异。${YELLOW}请选择可访问、丢包少的签名。"
 echo -e ""
@@ -381,7 +405,11 @@ mkdir -p "$inst_dir"
 # 8) 下载并解压 Lagrange
 pkg="$(detect_lagrange_pkg)"
 [[ "$pkg" == "UNKNOWN" ]] && { echo -e "${WHITE_ON_RED}未识别的架构：$(uname -m)。${NC}"; exit 1; }
-url="$LAGRANGE_BASE_URL/$pkg"
+if [[ -n "$lagrange_subdir_enc" ]]; then
+  url="$LAGRANGE_BASE_URL/$lagrange_subdir_enc/$pkg"
+else
+  url="$LAGRANGE_BASE_URL/$pkg"
+fi
 zip_path="$download_dir/$pkg"
 echo -e "${GREEN}将下载：${NC} $url"
 curl -L --fail -o "$zip_path" "$url" --progress-bar
@@ -502,4 +530,3 @@ else
   sudo systemctl daemon-reload >/dev/null 2>&1
   exit 1
 fi
-

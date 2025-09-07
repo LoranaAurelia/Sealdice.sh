@@ -134,12 +134,12 @@ run_signature_probes() {
       "雪桃 の 海豹源 反代 - 备用的备用"
     )
     local urls=(
-      "https://sign.lagrangecore.org/api/sign/30366"
-      "https://backbone.seal-sign.xuetao.host/api/sign/30366"
-      "https://turbo.seal-sign.xuetao.host/api/sign/30366"
-      "https://lagrmagic.cblkseal.tech/api/sign/30366"
-      "https://sign.hanbi.live/api/sign/30366"
-      "http://39.108.115.52:58080/api/sign/30366"
+      "https://sign.lagrangecore.org/api/sign/39038"
+      "https://backbone.seal-sign.xuetao.host/api/sign/39038"
+      "https://turbo.seal-sign.xuetao.host/api/sign/39038"
+      "https://lagrmagic.cblkseal.tech/api/sign/39038"
+      "https://sign.hanbi.live/api/sign/39038"
+      "http://39.108.115.52:58080/api/sign/39038"
     )
   echo -e "${YELLOW}正在进行签名可访问性测试（每个 10 次），请稍候...${NC}"
   local all_output=""
@@ -347,12 +347,12 @@ change_signature() {
   print_signature_menu
   read -p "$(echo -e ${YELLOW}输入编号（1/2/3/4/5/6）：${NC}) " choice
 
-  local lgr_official="https://sign.lagrangecore.org/api/sign/30366"
-  local lorana_proxy_backbone="https://backbone.seal-sign.xuetao.host/api/sign/30366"
-  local lorana_proxy_turbo="https://turbo.seal-sign.xuetao.host/api/sign/30366"
-  local cblkseal="https://lagrmagic.cblkseal.tech/api/sign/30366"
-  local lorana_proxy_backup="http://39.108.115.52:58080/api/sign/30366"
-  local hanbi_live="https://sign.hanbi.live/api/sign/30366"
+  local lgr_official="https://sign.lagrangecore.org/api/sign/39038"
+  local lorana_proxy_backbone="https://backbone.seal-sign.xuetao.host/api/sign/39038"
+  local lorana_proxy_turbo="https://turbo.seal-sign.xuetao.host/api/sign/39038"
+  local cblkseal="https://lagrmagic.cblkseal.tech/api/sign/39038"
+  local lorana_proxy_backup="http://39.108.115.52:58080/api/sign/39038"
+  local hanbi_live="https://sign.hanbi.live/api/sign/39038"
 
     local url="$lgr_official"
     case "${choice:-}" in

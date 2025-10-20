@@ -1,0 +1,14 @@
+# Normalize text files and force LF for shell scripts
+* text=auto
+
+# Shell scripts must use LF on checkout & commit
+*.sh text eol=lf
+
+# Prevent Git from attempting EOL normalization on binaries
+*.png -text
+*.jpg -text
+*.jpeg -text
+*.gif -text
+*.zip -text
+*.tar.gz -text
+*.7z -text

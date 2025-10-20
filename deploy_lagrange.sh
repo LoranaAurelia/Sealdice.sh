@@ -66,7 +66,6 @@ ensure_tools() {
 }
 
 # ========== 签名可达性测试 ==========
-
 # 对单个签名 URL 连续发起 10 次请求；全部成功才算可达。
 # 成功标准：HTTP 200、SSL 校验证书通过(ssl_verify_result=0 或为空/HTTP)、响应体非空。
 probe_sign_url() {
@@ -77,7 +76,6 @@ probe_sign_url() {
   for i in {1..10}; do
     local body metrics http time ssl ms
     body="$(mktemp)"
-    # 为了兼容 Cloudflare/反代：加浏览器 UA，禁止缓存，随重定向，超时 15s
     metrics="$(curl -sS -L -m 15 \
       -A 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36' \
       -H 'Pragma: no-cache' -H 'Cache-Control: no-cache' \
@@ -89,7 +87,6 @@ probe_sign_url() {
     time="$(printf '%s' "$metrics" | sed -n 's/.*TIME:\([0-9.]*\).*/\1/p')"
     ssl="$(printf '%s' "$metrics" | sed -n 's/.*SSL:\([0-9]*\).*/\1/p')"
 
-    # 转毫秒（四舍五入）
     ms="$(awk -v t="$time" 'BEGIN{printf("%.0f", t*1000)}')"
     [[ -z "$ms" ]] && ms=0
     times_ms+=("$ms")
@@ -97,7 +94,6 @@ probe_sign_url() {
     (( ms > max )) && max="$ms"
     (( ms < min )) && min="$ms"
 
-    # 判定：HTTP=200、SSL 正常（0 或空；空通常是 http 明文）、响应体非空
     if [[ "$http" != "200" || ! -s "$body" ]]; then
       ok=0
     else
@@ -128,7 +124,6 @@ probe_sign_url() {
 
 # 对一组签名执行测试（静默跑完再统一输出）
 run_signature_probes() {
-  # 名称与 URL 列表（与选择菜单保持一致顺序）
   local names=(
     "雪桃家自签 - Cloudflare"
     "雪桃自签 - 主线"
@@ -140,12 +135,11 @@ run_signature_probes() {
     "https://cf-sign.xuetao.host/40768"
     "https://backbone.seal-sign.xuetao.host/sign/40768"
     "https://edge.seal-sign.xuetao.host/sign/40768"
-    "https://edge.seal-sign.xuetao.host/sign/40768"
     "https://turbo.seal-sign.xuetao.host/sign/40768"
+    "http://39.108.115.52:58080/api/sign/39038"
   )
 
   echo -e "${YELLOW}正在进行签名可访问性测试（每个 10 次），请稍候...${NC}"
-  # 先静默执行全部测试，把输出暂存到变量中，结束后一次性打印
   local all_output=""
   for i in "${!urls[@]}"; do
     local tmp
@@ -173,7 +167,7 @@ print_signature_menu() {
   echo -e " ${GREEN}4)${NC} ${BLUE}雪桃自签 - 备用${NC}"
   echo -e "    · 雪桃自签，主机位于美国洛杉矶，备用线路，大陆优化线路，中国大陆访问性好，但建议其余线路可用时${YELLOW}优先使用其余线路。${NC}"
   echo -e ""
-  echo -e " ${GREEN}6)${NC} ${BLUE}雪桃 の 海豹源 反代 - 备用的备用${NC}"
+  echo -e " ${GREEN}5)${NC} ${BLUE}雪桃 の 海豹源 反代 - 备用的备用${NC}"
   echo -e "    · 雪桃反代的海豹源签名，主机是国内阿里云。因为没有备案只能裸IP，${YELLOW}可能会有被攻击导致访问异常的风险。${NC}；但对于网络高墙地带（如福建、江苏部分地区、内蒙古部分地区、新疆部分地区），是极大概率可以直接访问的。"
   echo -e "${CYAN}────────────────────────────────────────────────────────${NC}"
 }
@@ -228,16 +222,13 @@ install_system_dotnet9() {
   sudo tar -xzf "$tarball" -C "$DOTNET_INSTALL_DIR"
   rm -f "$tarball"
 
-  # 设系统 PATH & DOTNET_ROOT（供登录 shell 使用）
   sudo tee /etc/profile.d/dotnet.sh >/dev/null <<EOF
 export DOTNET_ROOT="$DOTNET_INSTALL_DIR"
 export PATH="\$PATH:$DOTNET_INSTALL_DIR"
 EOF
 
-  # 建系统级可执行链接（供非交互环境 / systemd 使用）
   sudo ln -sf "$DOTNET_INSTALL_DIR/dotnet" "$DOTNET_BIN_LINK"
 
-  # 当前会话立即可用自检
   export DOTNET_ROOT="$DOTNET_INSTALL_DIR"
   if ! "$DOTNET_INSTALL_DIR/dotnet" --list-runtimes 2>/dev/null | grep -qE '^Microsoft\.NETCore\.App 9\.0\.'; then
     echo -e "${WHITE_ON_RED}安装 .NET 9 失败，请检查网络或磁盘空间。${NC}"
@@ -261,13 +252,11 @@ ensure_icu() {
 
   echo -e "${YELLOW}正在安装 ICU 运行库...${NC}"
   sudo apt-get update -y || true
-  # 自动找最新的 libicuXX 包
   local pkg
   pkg="$(apt-cache search -n '^libicu[0-9]+$' | awk '{print $1}' | sort -V | tail -n1)"
   if [[ -n "$pkg" ]]; then
     sudo DEBIAN_FRONTEND=noninteractive apt-get install -y "$pkg"
   else
-    # 极端情况下找不到版本包，就兜底装 libicu-dev
     sudo DEBIAN_FRONTEND=noninteractive apt-get install -y libicu-dev
   fi
 }
@@ -339,15 +328,13 @@ if [[ ! "$know_sig" =~ ^[yY]$ ]]; then
 fi
 
 # 3) 选择签名
-# 先询问是否进行可访问性测试
 read -p "$(echo -e ${YELLOW}是否要执行签名可访问性测试？（y/n）：${NC})" do_probe
 if [[ "$do_probe" =~ ^[yY]$ ]]; then
   run_signature_probes
 fi
 
-# 打印菜单并读取选择
 print_signature_menu
-read -p "$(echo -e ${YELLOW}输入编号（1/2/3/4/5/6）：${NC} )" sign_choice
+read -p "$(echo -e ${YELLOW}输入编号（1/2/3/4/5）：${NC} )" sign_choice
 
 # 与菜单一一对应的 URL 常量
 lorana_cloudflare="https://cf-sign.xuetao.host/40768"
@@ -523,5 +510,3 @@ else
   sudo systemctl daemon-reload >/dev/null 2>&1
   exit 1
 fi
-
-

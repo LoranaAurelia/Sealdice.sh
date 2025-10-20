@@ -66,7 +66,7 @@ print_signature_menu() {
   echo -e " ${GREEN}4)${NC} ${BLUE}雪桃自签 - 备用${NC}"
   echo -e "    · 雪桃自签，主机位于美国洛杉矶，备用线路，大陆优化线路，中国大陆访问性好，但建议其余线路可用时${YELLOW}优先使用其余线路。${NC}"
   echo -e ""
-  echo -e " ${GREEN}6)${NC} ${BLUE}雪桃 の 海豹源 反代 - 备用的备用${NC}"
+  echo -e " ${GREEN}5)${NC} ${BLUE}雪桃 の 海豹源 反代 - 备用的备用${NC}"
   echo -e "    · 雪桃反代的海豹源签名，主机是国内阿里云。因为没有备案只能裸IP，${YELLOW}可能会有被攻击导致访问异常的风险。${NC}；但对于网络高墙地带（如福建、江苏部分地区、内蒙古部分地区、新疆部分地区），是极大概率可以直接访问的。"
   echo -e "${CYAN}────────────────────────────────────────────────────────${NC}"
 }
@@ -122,20 +122,20 @@ probe_sign_url() {
 }
 
 run_signature_probes() {
-    local names=(
-      "雪桃家自签 - Cloudflare"
-      "雪桃自签 - 主线"
-      "雪桃自签 - 边缘"
-      "雪桃自签 - 备用"
-      "雪桃 の 海豹源 反代 - 备用的备用"
-    )
-    local urls=(
-      "https://cf-sign.xuetao.host/40768"
-      "https://backbone.seal-sign.xuetao.host/sign/40768"
-      "https://edge.seal-sign.xuetao.host/sign/40768"
-      "https://edge.seal-sign.xuetao.host/sign/40768"
-      "https://turbo.seal-sign.xuetao.host/sign/40768"
-    )
+  local names=(
+    "雪桃家自签 - Cloudflare"
+    "雪桃自签 - 主线"
+    "雪桃自签 - 边缘"
+    "雪桃自签 - 备用"
+    "雪桃 の 海豹源 反代 - 备用的备用"
+  )
+  local urls=(
+    "https://cf-sign.xuetao.host/40768"
+    "https://backbone.seal-sign.xuetao.host/sign/40768"
+    "https://edge.seal-sign.xuetao.host/sign/40768"
+    "https://turbo.seal-sign.xuetao.host/sign/40768"
+    "http://39.108.115.52:58080/api/sign/39038"
+  )
   echo -e "${YELLOW}正在进行签名可访问性测试（每个 10 次），请稍候...${NC}"
   local all_output=""
   for i in "${!urls[@]}"; do
@@ -340,7 +340,7 @@ change_signature() {
   [[ "$do_probe" =~ ^[yY]$ ]] && run_signature_probes
 
   print_signature_menu
-  read -p "$(echo -e ${YELLOW}输入编号（1/2/3/4/5/6）：${NC}) " choice
+  read -p "$(echo -e ${YELLOW}输入编号（1/2/3/4/5）：${NC}) " choice
 
   local lorana_cloudflare="https://cf-sign.xuetao.host/40768"
   local lorana_backbone="https://backbone.seal-sign.xuetao.host/sign/40768"
@@ -348,15 +348,15 @@ change_signature() {
   local lorana_turbo="https://turbo.seal-sign.xuetao.host/sign/40768"
   local lorana_proxy_backup="http://39.108.115.52:58080/api/sign/39038"
 
-    local url="$lorana_cloudflare"
-    case "${choice:-}" in
-      1) url="$lorana_cloudflare" ;;
-      2) url="$lorana_backbone" ;;
-      3) url="$lorana_edge" ;;
-      4) url="$lorana_turbo" ;;
-      5) url="$lorana_proxy_backup" ;;
-      *) echo -e "${YELLOW}未选择有效编号，使用默认：${BLUE}Lagrange 官方${NC}" ;;
-    esac
+  local url="$lorana_cloudflare"
+  case "${choice:-}" in
+    1) url="$lorana_cloudflare" ;;
+    2) url="$lorana_backbone" ;;
+    3) url="$lorana_edge" ;;
+    4) url="$lorana_turbo" ;;
+    5) url="$lorana_proxy_backup" ;;
+    *) echo -e "${YELLOW}未选择有效编号，使用默认：${BLUE}雪桃家自签 - Cloudflare${NC}" ;;
+  esac
 
   backup_cfg "$cfg"
   update_json_inplace "$cfg" --arg u "$url" '.SignServerUrl=$u'

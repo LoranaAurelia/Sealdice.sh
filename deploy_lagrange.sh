@@ -132,10 +132,10 @@ run_signature_probes() {
     "雪桃 の 海豹源 反代 - 备用的备用"
   )
   local urls=(
-    "https://cf-sign.xuetao.host/40768"
-    "https://backbone.seal-sign.xuetao.host/sign/40768"
-    "https://edge.seal-sign.xuetao.host/sign/40768"
-    "https://turbo.seal-sign.xuetao.host/sign/40768"
+    "https://cf-sign.xuetao.host/42941"
+    "https://backbone.seal-sign.xuetao.host/sign/42941"
+    "https://edge.seal-sign.xuetao.host/sign/42941"
+    "https://turbo.seal-sign.xuetao.host/sign/42941"
     "http://39.108.115.52:58080/api/sign/39038"
   )
 
@@ -337,10 +337,10 @@ print_signature_menu
 read -p "$(echo -e ${YELLOW}输入编号（1/2/3/4/5）：${NC} )" sign_choice
 
 # 与菜单一一对应的 URL 常量
-lorana_cloudflare="https://cf-sign.xuetao.host/40768"
-lorana_backbone="https://backbone.seal-sign.xuetao.host/sign/40768"
-lorana_edge="https://edge.seal-sign.xuetao.host/sign/40768"
-lorana_turbo="https://turbo.seal-sign.xuetao.host/sign/40768"
+lorana_cloudflare="https://cf-sign.xuetao.host/42941"
+lorana_backbone="https://backbone.seal-sign.xuetao.host/sign/42941"
+lorana_edge="https://edge.seal-sign.xuetao.host/sign/42941"
+lorana_turbo="https://turbo.seal-sign.xuetao.host/sign/42941"
 lorana_proxy_backup="http://39.108.115.52:58080/api/sign/39038"
 
 case "${sign_choice:-}" in

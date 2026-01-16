@@ -55,7 +55,7 @@ print_signature_menu() {
   echo -e "${YELLOW}注意：${NC}延迟低≠访问性好，请以实测稳定性为准。"
   echo -e "${CYAN}────────────────────────────────────────────────────────${NC}"
   echo -e " ${GREEN}1)${NC} ${BLUE}雪桃家自签 - Cloudflare${NC}"
-  echo -e "    · 雪桃自签，机房位于雪桃家（澳大利亚-黄金海岸），由 Cloudflare 代理，在中国大陆访问性较差；${YELLOW}推荐海外主机使用。${NC}"
+  echo -e "    · 雪桃自签，机房位于香港，由 Cloudflare 代理，在中国大陆访问性较差；${YELLOW}推荐海外主机使用。${NC}"
   echo -e ""
   echo -e " ${GREEN}2)${NC} ${BLUE}雪桃自签 - 主线${NC}"
   echo -e "    · 雪桃自签，主机位于美国洛杉矶，是雪桃特挑的体质较好的普线主机，${YELLOW}推荐中国大陆使用。${NC}"
@@ -130,10 +130,10 @@ run_signature_probes() {
     "雪桃 の 海豹源 反代 - 备用的备用"
   )
   local urls=(
-    "https://cf-sign.xuetao.host/42941"
-    "https://backbone.seal-sign.xuetao.host/sign/42941"
-    "https://edge.seal-sign.xuetao.host/sign/42941"
-    "https://turbo.seal-sign.xuetao.host/sign/42941"
+    "https://cf-sign.xuetao.host/44343"
+    "https://backbone.seal-sign.xuetao.host/44343"
+    "https://edge.seal-sign.xuetao.host/44343"
+    "https://turbo.seal-sign.xuetao.host/44343"
     "http://39.108.115.52:58080/api/sign/39038"
   )
   echo -e "${YELLOW}正在进行签名可访问性测试（每个 10 次），请稍候...${NC}"
@@ -342,10 +342,10 @@ change_signature() {
   print_signature_menu
   read -p "$(echo -e ${YELLOW}输入编号（1/2/3/4/5）：${NC}) " choice
 
-  local lorana_cloudflare="https://cf-sign.xuetao.host/42941"
-  local lorana_backbone="https://backbone.seal-sign.xuetao.host/sign/42941"
-  local lorana_edge="https://edge.seal-sign.xuetao.host/sign/42941"
-  local lorana_turbo="https://turbo.seal-sign.xuetao.host/sign/42941"
+  local lorana_cloudflare="https://cf-sign.xuetao.host/44343"
+  local lorana_backbone="https://backbone.seal-sign.xuetao.host/44343"
+  local lorana_edge="https://edge.seal-sign.xuetao.host/44343"
+  local lorana_turbo="https://turbo.seal-sign.xuetao.host/44343"
   local lorana_proxy_backup="http://39.108.115.52:58080/api/sign/39038"
 
   local url="$lorana_cloudflare"
